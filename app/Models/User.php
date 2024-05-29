@@ -15,17 +15,6 @@ class User extends Authenticatable
     use Notifiable;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
-
-    /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
@@ -51,5 +40,11 @@ class User extends Authenticatable
     protected static function booted(): void
     {
         static::addGlobalScope(TenantScope::class);
+
+        static::creating(function ($model) {
+            if(session()->has("tenant_id")) {
+                $model->tenant_id = session()->get("tenant_id");
+            }
+        });
     }
 }
